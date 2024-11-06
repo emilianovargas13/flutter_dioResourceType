@@ -1,18 +1,23 @@
 import 'package:dio/dio.dart';
+import 'package:flutter_dio/app/config/dio_client.dart';
 import '../models/resource_type.dart';
 
 class ApiServices {
   final Dio dio;
   final String baseUrl = 'http://localhost:8080/api/resourceTypes';
+  final String token = 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJiYWx1ZXZlbnRzMjRAZ21haWwuY29tIiwicm9sZXMiOlt7ImF1dGhvcml0eSI6IlJPTEVfU1VQRVJVU0VSIn1dLCJpYXQiOjE3MzA5MTIyOTEsImV4cCI6MTczMTUxNzA5MX0.JFjWoP964XV3boB30TKkcPy82Ibgo6iEsvxsuRmu_WY';
 
   ApiServices(this.dio);
 
+  final DioClient dioClient = DioClient();
   
 
   // Obtener lista completa de tipos de recurso (GET)
   Future<List<ResourceType>> fetchResourceTypes() async {
     final url = '$baseUrl/list';
     try {
+      dio.options.headers['content-Type'] = 'application/json';
+      dio.options.headers['Authorization'] = token;
       final response = await dio.get(url);
       return (response.data as List)
           .map((json) => ResourceType.fromJson(json))
@@ -49,9 +54,8 @@ class ApiServices {
 
   // Crear nuevo tipo de recurso (POST)
 Future<void> createResourceType(ResourceType resourceType) async {
-  final url = '$baseUrl/';
   try {
-    await dio.post(url, data: resourceType.toMap());
+    final response = await dioClient.post('/', data: resourceType.toMap());
   } catch (e) {
       return null;
   }

@@ -12,6 +12,7 @@ class ResourceTypeCubit extends Cubit<ResourceTypeState> {
     try {
       emit(ResourceTypeLoading());
       final resourceTypes = await resourceRepository.fetchResourceTypes();
+      print("resultado jejeje ${resourceTypes}");
       emit(ResourceTypeLoaded(resourceTypes));
     } catch (e) {
       emit(ResourceTypeError(e.toString()));
